@@ -1,0 +1,124 @@
+% Fig. 2 of the paper: (a) one SNAP cycle, (b) one projected cycle, and the legend of both panels.
+% Standalone, column width (3.28 in), Times text as in the CVPR template:
+%     pdflatex fig2_diagrams.tex
+% Needs TikZ (libraries decorations.pathmorphing, arrows.meta, calc), amsmath, amssymb, times, standalone, varwidth.
+% The panels are drawn as macros (\snapPanel, \projectedPanel, \diagramLegend) that can be \input in a paper, with
+% the same packages, between \usetikzlibrary{...} and \begin{document}.
+\documentclass[10pt,border=1pt,varwidth=3.28in]{standalone}
+\usepackage{times}
+\usepackage{amsmath,amssymb}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathmorphing,arrows.meta,calc}
+
+% The noised image.  The printed figure writes x_\sigma = x + \sigma\xi; Sec. 4 of the paper writes z = x + \sigma\xi:
+% \renewcommand{\xnoised}{z} gives the labels z and D_\sigma(z).
+\newcommand{\xnoised}{x_\sigma}
+
+\definecolor{sheetfill}{gray}{0.93}
+\definecolor{sheetedge}{gray}{0.55}
+\definecolor{cDelta}{HTML}{0072B2}   % displacement Delta (blue)
+\definecolor{cNoise}{gray}{0.45}     % noising
+\definecolor{cNormal}{HTML}{CC79A7}  % normal component carried to x (pink)
+\definecolor{cIJ}{HTML}{7B3294}      % projected displacement (I-J)Delta (purple)
+
+\tikzset{
+  panel/.style={x=0.70cm,y=0.70cm,font=\footnotesize,line cap=round,line join=round},
+  legendpic/.style={x=0.52cm,y=0.52cm,font=\scriptsize,line cap=round,line join=round},
+  pt/.style={circle,fill=black,inner sep=0pt,minimum size=3.2pt},
+  ptopen/.style={circle,draw=black,fill=white,inner sep=0pt,minimum size=3.2pt,line width=0.6pt},
+  denoise/.style={-{Stealth[length=5pt,width=4pt]},line width=0.75pt},
+  delta/.style={-{Stealth[length=5pt,width=4pt]},line width=0.9pt,cDelta},
+  noise/.style={cNoise,line width=0.5pt,line join=round},
+  helper/.style={densely dotted,line width=0.6pt,gray!70!black},
+}
+
+% Noising: a Brownian bridge (fixed draw, seed 7) between two points.
+% Longitudinal component t + b_1(t), transverse component b_2(t), as fractions of |AB|.
+\newcommand{\brownianBridge}{0.016/0.022,0.033/-0.031,0.047/-0.040,0.057/-0.039,0.070/-0.001,0.079/0.022,0.095/0.016,0.119/0.010,0.132/0.006,0.143/0.052,0.162/0.044,0.180/0.039,0.197/0.052,0.206/0.052,0.222/0.050,0.242/0.023,0.249/0.026,0.261/0.017,0.265/0.053,0.272/0.075,0.275/0.078,0.289/0.100,0.297/0.094,0.314/0.127,0.331/0.130,0.345/0.150,0.344/0.117,0.356/0.131,0.372/0.087,0.388/0.033,0.394/0.028,0.406/0.007,0.415/0.015,0.426/0.081,0.448/0.061,0.459/0.047,0.474/0.057,0.496/0.074,0.508/0.072,0.523/0.070,0.539/0.093,0.555/0.111,0.563/0.086,0.579/0.087,0.603/0.092,0.609/0.066,0.630/0.076,0.647/0.056,0.658/0.087,0.687/0.096,0.708/0.102,0.716/0.089,0.732/0.089,0.751/0.036,0.766/0.008,0.786/0.022,0.801/-0.034,0.821/-0.007,0.846/-0.053,0.858/-0.028,0.875/-0.048,0.887/-0.023,0.904/-0.016,0.912/-0.055,0.923/-0.017,0.938/0.027,0.959/0.029,0.983/0.025,0.990/0.024,1.000/0.000}
+\newcommand{\brownianPath}[2]{%
+  \coordinate (bA) at (#1); \coordinate (bB) at (#2);
+  \coordinate (bW) at ($($(bA)!1!90:(bB)$)-(bA)$);
+  \draw[noise] (bA) \foreach \tt/\bb in \brownianBridge { -- ($(bA)!\tt!(bB) + \bb*(bW)$) };}
+
+% Slightly curved, slightly wavy manifold seen at an angle; the points lie on its middle curve.
+\newcommand{\manifoldSheet}{%
+  \useasboundingbox (-0.2,-0.45) rectangle (10.2,5.7);
+  \clip (-0.2,-0.45) rectangle (10.2,5.7);   % the same box for both panels
+  \fill[sheetfill] (0.600,0.628) -- (0.725,0.669) -- (0.851,0.709) -- (0.976,0.748) -- (1.102,0.785) -- (1.227,0.821) -- (1.353,0.855) -- (1.478,0.888) -- (1.603,0.919) -- (1.729,0.950) -- (1.854,0.978) -- (1.980,1.005) -- (2.105,1.031) -- (2.231,1.055) -- (2.356,1.078) -- (2.481,1.100) -- (2.607,1.120) -- (2.732,1.138) -- (2.858,1.155) -- (2.983,1.171) -- (3.108,1.185) -- (3.234,1.198) -- (3.359,1.210) -- (3.485,1.220) -- (3.610,1.228) -- (3.736,1.236) -- (3.861,1.241) -- (3.986,1.246) -- (4.112,1.248) -- (4.237,1.250) -- (4.363,1.250) -- (4.488,1.248) -- (4.614,1.246) -- (4.739,1.241) -- (4.864,1.236) -- (4.990,1.228) -- (5.115,1.220) -- (5.241,1.210) -- (5.366,1.198) -- (5.492,1.185) -- (5.617,1.171) -- (5.742,1.155) -- (5.868,1.138) -- (5.993,1.120) -- (6.119,1.100) -- (6.244,1.078) -- (6.369,1.055) -- (6.495,1.031) -- (6.620,1.005) -- (6.746,0.978) -- (6.871,0.950) -- (6.997,0.919) -- (7.122,0.888) -- (7.247,0.855) -- (7.373,0.821) -- (7.498,0.785) -- (7.624,0.748) -- (7.749,0.709) -- (7.875,0.669) -- (8.000,0.628) -- (9.500,1.778) -- (9.375,1.819) -- (9.249,1.859) -- (9.124,1.898) -- (8.998,1.935) -- (8.873,1.971) -- (8.747,2.005) -- (8.622,2.038) -- (8.497,2.069) -- (8.371,2.100) -- (8.246,2.128) -- (8.120,2.155) -- (7.995,2.181) -- (7.869,2.205) -- (7.744,2.228) -- (7.619,2.250) -- (7.493,2.270) -- (7.368,2.288) -- (7.242,2.305) -- (7.117,2.321) -- (6.992,2.335) -- (6.866,2.348) -- (6.741,2.360) -- (6.615,2.370) -- (6.490,2.378) -- (6.364,2.386) -- (6.239,2.391) -- (6.114,2.396) -- (5.988,2.398) -- (5.863,2.400) -- (5.737,2.400) -- (5.612,2.398) -- (5.486,2.396) -- (5.361,2.391) -- (5.236,2.386) -- (5.110,2.378) -- (4.985,2.370) -- (4.859,2.360) -- (4.734,2.348) -- (4.608,2.335) -- (4.483,2.321) -- (4.358,2.305) -- (4.232,2.288) -- (4.107,2.270) -- (3.981,2.250) -- (3.856,2.228) -- (3.731,2.205) -- (3.605,2.181) -- (3.480,2.155) -- (3.354,2.128) -- (3.229,2.100) -- (3.103,2.069) -- (2.978,2.038) -- (2.853,2.005) -- (2.727,1.971) -- (2.602,1.935) -- (2.476,1.898) -- (2.351,1.859) -- (2.225,1.819) -- (2.100,1.778) -- cycle;
+  \draw[sheetedge,line width=0.6pt] (0.600,0.628) -- (0.725,0.669) -- (0.851,0.709) -- (0.976,0.748) -- (1.102,0.785) -- (1.227,0.821) -- (1.353,0.855) -- (1.478,0.888) -- (1.603,0.919) -- (1.729,0.950) -- (1.854,0.978) -- (1.980,1.005) -- (2.105,1.031) -- (2.231,1.055) -- (2.356,1.078) -- (2.481,1.100) -- (2.607,1.120) -- (2.732,1.138) -- (2.858,1.155) -- (2.983,1.171) -- (3.108,1.185) -- (3.234,1.198) -- (3.359,1.210) -- (3.485,1.220) -- (3.610,1.228) -- (3.736,1.236) -- (3.861,1.241) -- (3.986,1.246) -- (4.112,1.248) -- (4.237,1.250) -- (4.363,1.250) -- (4.488,1.248) -- (4.614,1.246) -- (4.739,1.241) -- (4.864,1.236) -- (4.990,1.228) -- (5.115,1.220) -- (5.241,1.210) -- (5.366,1.198) -- (5.492,1.185) -- (5.617,1.171) -- (5.742,1.155) -- (5.868,1.138) -- (5.993,1.120) -- (6.119,1.100) -- (6.244,1.078) -- (6.369,1.055) -- (6.495,1.031) -- (6.620,1.005) -- (6.746,0.978) -- (6.871,0.950) -- (6.997,0.919) -- (7.122,0.888) -- (7.247,0.855) -- (7.373,0.821) -- (7.498,0.785) -- (7.624,0.748) -- (7.749,0.709) -- (7.875,0.669) -- (8.000,0.628);
+  \draw[sheetedge,line width=0.6pt] (2.100,1.778) -- (2.225,1.819) -- (2.351,1.859) -- (2.476,1.898) -- (2.602,1.935) -- (2.727,1.971) -- (2.853,2.005) -- (2.978,2.038) -- (3.103,2.069) -- (3.229,2.100) -- (3.354,2.128) -- (3.480,2.155) -- (3.605,2.181) -- (3.731,2.205) -- (3.856,2.228) -- (3.981,2.250) -- (4.107,2.270) -- (4.232,2.288) -- (4.358,2.305) -- (4.483,2.321) -- (4.608,2.335) -- (4.734,2.348) -- (4.859,2.360) -- (4.985,2.370) -- (5.110,2.378) -- (5.236,2.386) -- (5.361,2.391) -- (5.486,2.396) -- (5.612,2.398) -- (5.737,2.400) -- (5.863,2.400) -- (5.988,2.398) -- (6.114,2.396) -- (6.239,2.391) -- (6.364,2.386) -- (6.490,2.378) -- (6.615,2.370) -- (6.741,2.360) -- (6.866,2.348) -- (6.992,2.335) -- (7.117,2.321) -- (7.242,2.305) -- (7.368,2.288) -- (7.493,2.270) -- (7.619,2.250) -- (7.744,2.228) -- (7.869,2.205) -- (7.995,2.181) -- (8.120,2.155) -- (8.246,2.128) -- (8.371,2.100) -- (8.497,2.069) -- (8.622,2.038) -- (8.747,2.005) -- (8.873,1.971) -- (8.998,1.935) -- (9.124,1.898) -- (9.249,1.859) -- (9.375,1.819) -- (9.500,1.778);
+  \draw[sheetedge,line width=0.6pt] (0.600,0.628) -- (2.100,1.778);
+  \draw[sheetedge,line width=0.6pt] (8.000,0.628) -- (9.500,1.778);
+  \node[sheetedge!60!black,anchor=north west] at (8.100,0.728) {$\mathcal M$};
+}
+
+% (a) One SNAP cycle.
+\newcommand{\snapPanel}{%
+\begin{tikzpicture}[panel]
+  \manifoldSheet
+  % decomposition of Delta: normal part x -> pi(x), tangent part pi(x) -> D_sigma(x_sigma)
+  \draw[helper] (6.181,3.746) -- (6.000,1.755);
+  \draw[helper] (6.000,1.755) -- (3.100,1.636);
+  \brownianPath{6.181,3.746}{2.572,4.691}
+  \draw[denoise] (2.572,4.691) -- (3.100,1.636);
+  \draw[delta] (6.181,3.746) -- (3.100,1.636);
+  \node[cDelta,anchor=south] at (4.350,2.700) {$\Delta$};
+  \node[anchor=north,gray!30!black] at (4.550,1.560) {$\sigma A_\xi^{-1}P_T\xi$};
+  \node[pt] at (6.181,3.746) {}; \node[right=2pt] at (6.181,3.746) {$x$};
+  \node[pt] at (2.572,4.691) {}; \node[above=2pt] at (2.572,4.691) {$\xnoised=x+\sigma\xi$};
+  \node[pt] at (3.100,1.636) {}; \node[anchor=south east] at (2.800,2.080) {$D_\sigma(\xnoised)$};
+  \node[ptopen] at (6.000,1.755) {}; \node[anchor=north west] at (6.100,1.640) {$\pi(x)$};
+\end{tikzpicture}}
+
+% (b) One projected cycle.
+\newcommand{\projectedPanel}{%
+\begin{tikzpicture}[panel]
+  \manifoldSheet
+  % normal at pi(x) (grey), tilted with respect to the normal at D_sigma(x_sigma)
+  \draw[helper,gray!55] (6.181,3.746) -- (6.000,1.755);
+  % P_N Delta read on the normal at D_sigma(x_sigma), carried to x (same length, same direction)
+  \draw[cNormal,line width=3pt,opacity=0.35] (2.835,3.168) -- (3.100,1.636);
+  \draw[cNormal,line width=3pt,opacity=0.35] (6.181,3.746) -- (6.446,2.214);
+  \brownianPath{6.181,3.746}{2.572,4.691}
+  \draw[denoise] (2.572,4.691) -- (3.100,1.636);
+  \draw[delta] (6.181,3.746) -- (3.100,1.636);
+  \draw[helper] (6.181,3.746) -- (2.835,3.168);
+  \draw[helper] (3.100,1.636) -- (6.446,2.214);
+  \draw[gray!70!black,line width=0.5pt] (2.869,2.971) -- (3.066,3.005) -- (3.032,3.202);
+  \draw[-{Stealth[length=5pt,width=4pt]},line width=1pt,cIJ] (6.181,3.746) -- (6.446,2.214);
+  % residual O(sigma^2): from pi(x) to the projected point x+(I-J)Delta
+  \draw[line width=0.8pt,black!75] (6.000,1.755) -- (6.446,2.214);
+  % labels, off the strokes
+  \node[cDelta,anchor=south] at (4.350,2.700) {$\Delta$};
+  \node[anchor=north,gray!30!black] at (5.350,3.540) {$J\Delta$};
+  \node[cNormal!60!black,anchor=east] at (2.600,2.950) {$P_N\Delta$};
+  \node[anchor=north west,black!75] at (6.520,1.960) {$O(\sigma^2)$};
+  \node[cIJ,anchor=west] at (6.780,2.560) {$x+(I-J)\Delta$};
+  \node[pt] at (2.572,4.691) {}; \node[above=2pt] at (2.572,4.691) {$\xnoised$};
+  \node[pt] at (6.181,3.746) {}; \node[above right=1pt] at (6.181,3.746) {$x$};
+  \node[pt] at (3.100,1.636) {}; \node[anchor=south east] at (2.800,2.080) {$D_\sigma(\xnoised)$};
+  \node[pt,fill=cIJ] at (6.446,2.214) {};
+  \node[ptopen] at (6.000,1.755) {}; \node[anchor=north east] at (5.930,1.640) {$\pi(x)$};
+\end{tikzpicture}}
+
+% Legend on two lines (narrower than a CVPR column).
+\newcommand{\diagramLegend}{%
+\begin{tikzpicture}[legendpic]
+  \brownianPath{0,0}{1.3,0}               \node[anchor=west] at (1.4,0) {noising};
+  \draw[denoise]  (4.9,0) -- (6.2,0);    \node[anchor=west] at (6.3,0) {denoising};
+  \draw[delta] (10.2,0) -- (11.5,0);  \node[anchor=west] at (11.6,0) {$\Delta$};
+  \draw[cNormal,line width=3pt,opacity=0.35] (12.6,0) -- (13.9,0); \node[anchor=west] at (14.0,0) {$P_N\Delta$};
+  \draw[-{Stealth[length=5pt,width=4pt]},line width=1pt,cIJ] (0,-1.3) -- (1.3,-1.3); \node[anchor=west] at (1.4,-1.3) {$(I-J)\Delta$};
+  \draw[helper] (4.9,-1.3) -- (6.2,-1.3);   \node[anchor=west] at (6.3,-1.3) {decomposition};
+  \node[ptopen] at (10.5,-1.3) {};       \node[anchor=west] at (10.8,-1.3) {$\pi(x)$};
+\end{tikzpicture}}
+
+\begin{document}
+\centering
+\snapPanel\\[-1pt]
+{\small (a) One SNAP cycle}\\[6pt]
+\projectedPanel\\[-1pt]
+{\small (b) One projected cycle}\\[6pt]
+\diagramLegend
+\end{document}

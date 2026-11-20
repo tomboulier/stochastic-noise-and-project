@@ -1,0 +1,21 @@
+# weights, estimators and calibrations are never versioned
+weights/
+estimators/
+calibration/
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.safetensors
+
+# data and results
+data/
+outputs/
+figures/
+test_outputs/
+*.npy
+*.npz
+
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
