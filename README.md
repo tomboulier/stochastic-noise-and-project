@@ -84,7 +84,29 @@ Noise levels are given as σ, the variance-exploding level of the paper,
 
 ## Models and data
 
-**No weights are in this repository.**
+**No weights and no data are in this repository.** The scripts look for them in these folders, which
+git ignores:
+
+| folder | content | how to get it |
+|---|---|---|
+| `weights/` | `chestmnist_224.pt`, the diffusion model of the ChestMNIST experiments | see below |
+| `data/chestmnist224/` | the image sets of the paper (`<pathology>_<split>.npy`, `healthy_<split>.npy`) | built |
+| `estimators/` | `cnn_<pathology>.pt`, the estimators of SNAPED / P-SNAPED | built |
+| `calibration/` | `r18_224_test.json`, the detection thresholds of the evaluation classifier | built, needs `weights/medmnist/` |
+
+With `weights/chestmnist_224.pt` in place, one command builds the rest:
+
+```bash
+scripts/build_chestmnist.sh
+```
+
+It downloads ChestMNIST 224 × 224 (3.9 GB, to `~/.medmnist`, once), exports the image sets, trains the
+three estimators and, if the classifier weights are in `weights/medmnist/`, calibrates the detection
+thresholds. Steps whose output exists are skipped, so it can be run again. The quick start above needs
+the first two steps; the classifier is only needed for Figs. 5 and 6. The face experiments have their own
+preparation, in [REPRODUCING.md](REPRODUCING.md).
+
+Where the models and the data come from:
 
 - ChestMNIST DDPM (healthy radiographs, 224 × 224, diffusers `UNet2DModel`, architecture in
   [`configs/chestmnist_224.json`](configs/chestmnist_224.json)): released with the camera-ready version.
