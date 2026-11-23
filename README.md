@@ -32,13 +32,20 @@ The rest of the repository:
 
 ## Install
 
+With [uv](https://docs.astral.sh/uv/) (Python ≥ 3.10; `uv.lock` pins the versions the self-checks
+were last run with):
+
 ```bash
-pip install -r requirements.txt
-python tests/test_snap.py                 # self-checks on a tiny random U-Net, CPU, ~1 min
+uv sync                                   # creates .venv with the locked dependencies
+uv run python tests/test_snap.py          # self-checks on a tiny random U-Net, CPU, ~1 min
 ```
 
-The FFHQ model of the paper is a guided-diffusion network:
-`pip install git+https://github.com/openai/guided-diffusion`.
+The FFHQ model of the paper is a guided-diffusion network, and the CelebA-HQ photographs come as a
+parquet file; both need the `faces` extra: `uv sync --extra faces`.
+
+The commands below are written `python ...`: prefix them with `uv run`, or activate the environment
+once (`source .venv/bin/activate`). Without uv, `pip install .` (or `pip install ".[faces]"`) installs
+the same dependencies, unpinned.
 
 ## Quick start
 

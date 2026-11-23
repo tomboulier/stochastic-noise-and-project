@@ -47,7 +47,7 @@ is the model of the paper (and `chestmnist_64.json` a 64-pixel version).
 ### 3. A guided-diffusion (ADM) checkpoint
 
 ```bash
-pip install git+https://github.com/openai/guided-diffusion
+uv sync --extra faces      # installs guided-diffusion
 python scripts/project.py --model weights/ffhq.pt --config configs/ffhq_256_adm.json ...
 ```
 
