@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install the locked environment
+        run: uv sync --locked
+      - name: Self-checks (tiny random U-Net, CPU)
+        run: |
+          for t in tests/test_*.py; do
+            echo "::group::$t"
+            uv run python "$t"
+            echo "::endgroup::"
+          done
