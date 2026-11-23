@@ -1,0 +1,37 @@
+[project]
+name = "snap-cycles"
+version = "0.2.0"
+description = "SNAP: stochastic noise-and-project cycles with a pre-trained diffusion model"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=1.13",
+    "torchvision",
+    "diffusers>=0.21",
+    "numpy",
+    "pillow",
+    "matplotlib",
+    # evaluation and data
+    "lpips",                # LPIPS (Table 1)
+    "medmnist",             # scripts/export_chestmnist.py
+    "scipy",
+    "safetensors",          # .safetensors weights
+]
+
+[project.optional-dependencies]
+# FFHQ model and face datasets (Table 1, Figs. 1, 3, 4, 7)
+faces = [
+    "guided-diffusion @ git+https://github.com/openai/guided-diffusion",
+    "pyarrow",              # scripts/prepare_faces.py on the CelebA-HQ parquet file
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["snap"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
