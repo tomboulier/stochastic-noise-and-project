@@ -1,0 +1,4 @@
+# not part of the supplementary archive (scripts/build_supplement.sh)
+.github/ export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore

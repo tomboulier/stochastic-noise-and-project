@@ -13,6 +13,7 @@ data/
 outputs/
 figures/
 test_outputs/
+dist/
 *.npy
 *.npz
 
